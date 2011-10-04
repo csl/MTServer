@@ -36,12 +36,12 @@ public class jdbcmysql {
   private String insertdbSQL = "insert into GPSREC(id,name,gpsdata,stime,dtime,who) " +
   "select ifNULL(max(id),0)+1,?,?,?,?,? FROM GPSREC";
 
-  private String updatedbSQL = "update GPSREC set name='?',gpsdata='?',stime='?',dtime='?' WHERE id = '?'";
+  private String updatedbSQL = "update GPSREC set name='?',gpsdata='?',stime='?',dtime='?' WHERE name = '?'";
 
-  private String deletedbSQL = "delete FROM GPSREC WHERE id = '?'";
+  private String deletedbSQL = "delete FROM GPSREC WHERE name = '?'";
   
   private String selectSQL = "select * from GPSREC ";
- 
+
   public jdbcmysql(MTServer mt)
   {
 	mts = mt;
@@ -135,13 +135,13 @@ public class jdbcmysql {
     }
   }
 
-  public void deleteidTable(String id)
+  public void deleteListTable(String name)
   {
     try
     {
       pst = con.prepareStatement(deletedbSQL);
      
-      pst.setString(1, id);
+      pst.setString(1, name);
       pst.executeUpdate();
     }
     catch(SQLException e)
@@ -236,6 +236,44 @@ public class jdbcmysql {
         data.who = rs.getString("who");
         
         mts.gpslist.add(data);
+        //System.out.println(rs.getInt("id")+"\t\t"+
+       //rs.getString("name")+"\t\t"+rs.getString("passwd"));
+      }
+    }
+    catch(SQLException e)
+    {
+      System.out.println("DropDB Exception :" + e.toString());
+    }
+    finally
+    {
+      Close();
+    }
+  }
+  
+  public void SelectCTTable(String ctime)
+  {
+	String selectCTSQL = "select * from GPSREC where '" +  ctime + "' BETWEEN stime AND dtime";
+
+	mts.gpslist.clear();	
+    try
+    {
+      stat = con.createStatement();
+      rs = stat.executeQuery(selectCTSQL);
+      //System.out.println("ID\t\tName\t\tPASSWORD");
+      while(rs.next())
+      {
+        GPSStruct data = new GPSStruct();
+    	  
+        data.id = rs.getString("id");
+        data.name = rs.getString("name");
+        data.gps = rs.getString("gps");
+        data.stime = rs.getString("stime");
+        data.dtime = rs.getString("dtime");
+        data.who = rs.getString("who");
+        
+        mts.gpslist.add(data);
+        
+        break;
         //System.out.println(rs.getInt("id")+"\t\t"+
        //rs.getString("name")+"\t\t"+rs.getString("passwd"));
       }

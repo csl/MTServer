@@ -168,17 +168,35 @@ public MTServer(int port, int numThreads)
 					else if(line.equals("DGPS"))
 					{
 						//SetData
-						String id = in.readUTF();
+						String name = in.readUTF();
 						
 						//InsertData
-						db.deleteidTable(id);
+						db.deleteListTable(name);
 						
 						//RepData
 						DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
 						out.writeUTF("OK");
 						out.flush();
 					}
-					
+					else if(line.equals("CGPST"))
+					{
+						//SetData
+						String ctime = in.readUTF();
+
+						//Query
+						db.SelectCTTable(ctime);
+						
+						DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+						
+						//GPS request for time
+						GPSStruct gps = gpslist.get(0);
+						out.writeUTF(gps.id);
+						out.writeUTF(gps.name);
+						out.writeUTF(gps.gps);
+						out.writeUTF(gps.stime);
+						out.writeUTF(gps.dtime);
+						out.flush();
+					}
 			        in.close();
 					clientSocket.close();
 				} catch (IOException ex) {
