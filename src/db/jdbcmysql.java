@@ -25,22 +25,22 @@ public class jdbcmysql {
  
   private String dropdbSQL = "DROP TABLE GPSREC ";
  
-  private String createdbSQL = "CREATE TABLE GPSREC IF NOT EXISTS (" +
-    "    id  INTEGER primary key" +
-    "  , name VARCHAR(20) " +
-    "  , gpsdata VARCHAR(200) " +
-    "  , stime    VARCHAR(20) " +
-    "  , dtime    VARCHAR(20) " +
-    "  , who  	  VARCHAR(20))";
+  private String createdbSQL = "CREATE TABLE if not exists GPSREC (" +
+    "    id  INTEGER primary key NOT NULL AUTO_INCREMENT" +
+    "  , name VARCHAR(20) NOT NULL" +
+    "  , gpsdata VARCHAR(200) NOT NULL" +
+    "  , stime    VARCHAR(20) NOT NULL " +
+    "  , dtime    VARCHAR(20) NOT NULL" +
+    "  , who  	  VARCHAR(20) NOT NULL)";
  
-  private String insertdbSQL = "insert into GPSREC(id,name,gpsdata,stime,dtime,who) " +
-  "select ifNULL(max(id),0)+1,?,?,?,?,? FROM GPSREC";
+  private String insertdbSQL = "insert into GPSREC (name,gpsdata,stime,dtime,who) values " +
+  "(?,?,?,?,?)";
 
-  private String updatedbSQL = "update GPSREC set name='?',gpsdata='?',stime='?',dtime='?' WHERE name = '?'";
+  private String updatedbSQL = "update GPSREC set name=?,gpsdata=?,stime=?,dtime=? WHERE name = ?";
 
-  private String deletedbSQL = "delete FROM GPSREC WHERE name = '?'";
+  private String deletedbSQL = "delete FROM GPSREC WHERE name = ?";
   
-  private String selectSQL = "select * from GPSREC ";
+  private String selectSQL = "select * from GPSREC";
 
   public jdbcmysql(MTServer mt)
   {
@@ -50,8 +50,8 @@ public class jdbcmysql {
       Class.forName("com.mysql.jdbc.Driver");
       //註冊driver
       con = DriverManager.getConnection(
-      "jdbc:mysql://localhost/db?useUnicode=true&characterEncoding=Big5",
-      "root","123456");
+      "jdbc:mysql://localhost/gps?useUnicode=true&characterEncoding=utf8",
+      "root","08031222");
       //取得connection
 
 //jdbc:mysql://localhost/test?useUnicode=true&characterEncoding=Big5
@@ -63,7 +63,8 @@ public class jdbcmysql {
     {
       System.out.println("DriverClassNotFound :"+e.toString());
     }//有可能會產生sqlexception
-    catch(SQLException x) {
+    catch(SQLException x) 
+    {
       System.out.println("Exception :"+x.toString());
     }
    
@@ -122,7 +123,6 @@ public class jdbcmysql {
       pst.setString(3, stime);
       pst.setString(4, dtime);
       pst.setString(5, "user");
-      pst.setString(6, id);
       pst.executeUpdate();
     }
     catch(SQLException e)
@@ -230,7 +230,7 @@ public class jdbcmysql {
     	  
         data.id = rs.getString("id");
         data.name = rs.getString("name");
-        data.gps = rs.getString("gps");
+        data.gps = rs.getString("gpsdata");
         data.stime = rs.getString("stime");
         data.dtime = rs.getString("dtime");
         data.who = rs.getString("who");
@@ -242,7 +242,7 @@ public class jdbcmysql {
     }
     catch(SQLException e)
     {
-      System.out.println("DropDB Exception :" + e.toString());
+      System.out.println("select Exception :" + e.toString());
     }
     finally
     {
@@ -266,7 +266,7 @@ public class jdbcmysql {
     	  
         data.id = rs.getString("id");
         data.name = rs.getString("name");
-        data.gps = rs.getString("gps");
+        data.gps = rs.getString("gpsdata");
         data.stime = rs.getString("stime");
         data.dtime = rs.getString("dtime");
         data.who = rs.getString("who");
@@ -280,7 +280,7 @@ public class jdbcmysql {
     }
     catch(SQLException e)
     {
-      System.out.println("DropDB Exception :" + e.toString());
+      System.out.println("select Exception :" + e.toString());
     }
     finally
     {

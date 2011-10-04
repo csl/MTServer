@@ -107,10 +107,15 @@ public MTServer(int port, int numThreads)
 					{
 						//SetData
 						String name = in.readUTF();
-						String gps = in.readUTF();
 						String stime = in.readUTF();
 						String dtime = in.readUTF();
+						String gps = in.readUTF();
 						
+						System.out.println(name);
+						System.out.println(gps);
+						System.out.println(stime);
+						System.out.println(dtime);
+
 						//InsertData
 						db.insertTable(name, gps, stime, dtime);
 						
