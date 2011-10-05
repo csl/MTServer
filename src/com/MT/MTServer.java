@@ -84,13 +84,45 @@ public MTServer(int port, int numThreads)
 						line = in.readUTF();
 						NowStatus = line;
 						hasNowStatus = true;
+
+						//String clock = in.readUTF();
+						//db.SelectCTTable(clock);
+						
+						//System.out.println("req clock: " + clock);
+						
 						//RepData
 						DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
 						out.writeUTF("OK");
+						/*
+						if (gpslist.size() != 0)
+						{
+							GPSStruct gps = gpslist.get(0);
+							out.writeUTF("nowGPSRange");	
+							out.writeUTF(gps.name);
+							out.writeUTF(gps.gps);
+							out.writeUTF(gps.stime);
+							out.writeUTF(gps.dtime);
+							
+							System.out.println(gps.name);
+							System.out.println(gps.gps);
+							System.out.println(gps.stime);
+							System.out.println(gps.dtime);
+						}
+						else
+						{
+							out.writeUTF("NoGPSRange");							
+						}
+						*/					
 						out.flush();
 					}
 					else if(line.equals("nowStatus"))
 					{
+						//check clock
+						String clock = in.readUTF();
+						db.SelectCTTable(clock);
+
+						System.out.println("req clock: " + clock);
+						
 						//RepData
 						DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
 						if (hasNowStatus == true)
@@ -101,6 +133,26 @@ public MTServer(int port, int numThreads)
 						{
 							out.writeUTF("NoStatus");
 						}
+						
+						if (gpslist.size() != 0)
+						{
+							GPSStruct gps = gpslist.get(0);
+							out.writeUTF("nowGPSRange");	
+							out.writeUTF(gps.name);
+							out.writeUTF(gps.gps);
+							out.writeUTF(gps.stime);
+							out.writeUTF(gps.dtime);
+							
+							System.out.println(gps.name);
+							System.out.println(gps.gps);
+							System.out.println(gps.stime);
+							System.out.println(gps.dtime);
+						}
+						else
+						{
+							out.writeUTF("NoGPSRange");							
+						}
+						
 						out.flush();
 					}
 					else if(line.equals("SetGPSRange"))
@@ -127,12 +179,32 @@ public MTServer(int port, int numThreads)
 					else if(line.equals("GetGPSRange"))
 					{
 						//RepData
-						String stime = in.readUTF();
-						String dtime = in.readUTF();
+						String clock = in.readUTF();
+						db.SelectCTTable(clock);
+						
+						System.out.println("req clock: " + clock);
+						
 						//Query
-						String gps = db.SelectTableTime(stime, dtime);
 						DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-						out.writeUTF(gps);
+						if (gpslist.size() != 0)
+						{
+							GPSStruct gps = gpslist.get(0);
+							out.writeUTF("nowGPSRange");	
+							out.writeUTF(gps.name);
+							out.writeUTF(gps.gps);
+							out.writeUTF(gps.stime);
+							out.writeUTF(gps.dtime);
+							
+							System.out.println(gps.name);
+							System.out.println(gps.gps);
+							System.out.println(gps.stime);
+							System.out.println(gps.dtime);
+						}
+						else
+						{
+							out.writeUTF("NoGPSRange");							
+						}
+						
 						out.flush();
 					}
 					else if(line.equals("LGPS"))
@@ -158,9 +230,15 @@ public MTServer(int port, int numThreads)
 						//SetData
 						String id = in.readUTF();
 						String name = in.readUTF();
-						String gps = in.readUTF();
 						String stime = in.readUTF();
 						String dtime = in.readUTF();
+						String gps = in.readUTF();
+
+						System.out.println(name);
+						System.out.println(gps);
+						System.out.println(stime);
+						System.out.println(dtime);
+						
 						
 						//InsertData
 						db.updateTable(id, name, gps, stime, dtime);

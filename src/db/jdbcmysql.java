@@ -36,7 +36,7 @@ public class jdbcmysql {
   private String insertdbSQL = "insert into GPSREC (name,gpsdata,stime,dtime,who) values " +
   "(?,?,?,?,?)";
 
-  private String updatedbSQL = "update GPSREC set name=?,gpsdata=?,stime=?,dtime=? WHERE name = ?";
+  private String updatedbSQL = "update GPSREC set name=?,gpsdata=?,stime=?,dtime=? WHERE id = ?";
 
   private String deletedbSQL = "delete FROM GPSREC WHERE name = ?";
   
@@ -122,7 +122,8 @@ public class jdbcmysql {
       pst.setString(2, gps);
       pst.setString(3, stime);
       pst.setString(4, dtime);
-      pst.setString(5, "user");
+      pst.setString(5, id);
+      
       pst.executeUpdate();
     }
     catch(SQLException e)
