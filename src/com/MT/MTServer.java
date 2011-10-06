@@ -11,7 +11,7 @@ import db.jdbcmysql;
 public class MTServer {
 
 public static final int MTPORT = 12341;
-public static final int NUM_THREADS = 10;
+public static final int NUM_THREADS = 100;
 public static Socket clientSocket;
 
 public boolean rangeGPSSet;
