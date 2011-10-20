@@ -4,6 +4,7 @@ import java.io.* ;
 import java.net.* ;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import db.jdbcmysql;
 
@@ -168,9 +169,31 @@ public MTServer(int port, int numThreads)
 						System.out.println(stime);
 						System.out.println(dtime);
 
-						//InsertData
-						db.insertTable(name, gps, stime, dtime);
-						
+						//implement check
+						int sstime = 0, ddtime = 0;
+					    StringTokenizer stoken = null;
+				        stoken = new StringTokenizer( stime, ":" );
+				        if ( stoken.hasMoreTokens() )
+				        {
+					            sstime = Integer.parseInt(stoken.nextToken());
+					    }						
+				        stoken = new StringTokenizer( dtime, ":" );
+				        if ( stoken.hasMoreTokens() )
+				        {
+					            ddtime = Integer.parseInt(stoken.nextToken());
+					    }			
+				        
+				        if (ddtime - sstime < 0)
+		        		{
+							//InsertData
+							db.insertTable(name, gps, stime, "23:59");
+							db.insertTable(name, gps, "00:00", dtime);				        	
+		        		}
+				        else
+				        {
+							//InsertData
+							db.insertTable(name, gps, stime, dtime);
+				        }
 						//RepData
 						DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
 						out.writeUTF("OK");
@@ -238,10 +261,31 @@ public MTServer(int port, int numThreads)
 						System.out.println(gps);
 						System.out.println(stime);
 						System.out.println(dtime);
-						
-						
-						//InsertData
-						db.updateTable(id, name, gps, stime, dtime);
+
+						//implement check
+						int sstime = 0, ddtime = 0;
+					    StringTokenizer stoken = null;
+				        stoken = new StringTokenizer( stime, ":" );
+				        if ( stoken.hasMoreTokens() )
+				        {
+					            sstime = Integer.parseInt(stoken.nextToken());
+					    }						
+				        stoken = new StringTokenizer( dtime, ":" );
+				        if ( stoken.hasMoreTokens() )
+				        {
+					            ddtime = Integer.parseInt(stoken.nextToken());
+					    }			
+				        
+				        if (ddtime - sstime < 0)
+		        		{
+							//InsertData
+							db.deleteListTable(name);
+							db.insertTable(name, gps, stime, "23:59");
+							db.insertTable(name, gps, "00:00", dtime);				        	
+		        		}
+				        else					
+							//InsertData
+							db.updateTable(id, name, gps, stime, dtime);
 						
 						//RepData
 						DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
